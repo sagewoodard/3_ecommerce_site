@@ -30,7 +30,8 @@ export default function RootLayout({ children }) {
                   <h1 className={grenze.className}>E-Commerce Site</h1>
                 </Link>
 
-                <h5 className={`mid-text ${grenze.className}`}>- Things you need and things you don't -</h5>
+                <h5 className={`mid-text ${grenze.className}`}>- Things you need and things you don&apos;t -</h5>
+
                 <Cart />
               </div>
             </header>

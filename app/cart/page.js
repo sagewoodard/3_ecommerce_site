@@ -3,6 +3,7 @@
 import { useProducts } from "@/context/ProductContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function CartPage() {
   const router = useRouter()
@@ -75,12 +76,17 @@ export default function CartPage() {
             ? 'planner'
             : rawName;
 
-          const imgUrl = `low_res/${imgName}.jpeg`;
+          const imgUrl = `/low_res/${imgName}.jpeg`;
 
 
           return (
             <div key={itemIndex} className="cart-item">
-              <img src={imgUrl} alt={imgName + '-img'} />
+              <Image 
+                src={imgUrl} 
+                alt={`${imgName}-img`} 
+                width={150}
+                height={150} 
+              />
               <div className="cart-item-info">
                 <h3>{itemData.name}</h3>
                 <p>{itemData.description.slice(0, 100)}{itemData.description.length > 100 ? '...' : ''}</p>
