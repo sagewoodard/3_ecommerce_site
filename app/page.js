@@ -1,7 +1,10 @@
 import ImageBanner from "@/components/ImageBanner";
 import Products from "@/components/Products";
 
-// Fetch products directly using server-side code
+// Force this page to be dynamically rendered (avoids prerendering errors)
+export const dynamic = 'force-dynamic';
+
+// Fetch products directly from Stripe
 async function fetchProductsFromStripe() {
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
   if (!stripeSecretKey) {
@@ -22,36 +25,33 @@ async function fetchProductsFromStripe() {
     }
 
     const data = await res.json();
-    return data?.data || [];
+    return data?.data ?? [];
   } catch (err) {
     console.error("Error fetching products:", err);
     return [];
   }
 }
 
-// Server component
 export default async function Home() {
   const products = await fetchProductsFromStripe();
 
-  // Ensure products is always an array
-  const safeProducts = Array.isArray(products) ? products : [];
-
   let planner = null;
-  let stickers = [];
+  const stickers = [];
 
-  for (let product of safeProducts) {
-    if (!product) continue; // skip any undefined items
-    if (product.name === "Medieval Dragon Month Planner.jpeg") {
+  for (const product of products) {
+    if (product?.name === "Medieval Dragon Month Planner.jpeg") {
       planner = product;
-      continue;
+    } else {
+      stickers.push(product);
     }
-    stickers.push(product);
   }
 
   return (
     <>
       <ImageBanner />
+
       <section>
+        {/* Pass safe defaults in case planner or stickers are undefined */}
         <Products planner={planner ?? null} stickers={stickers ?? []} />
       </section>
     </>
