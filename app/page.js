@@ -1,14 +1,18 @@
 import ImageBanner from "@/components/ImageBanner";
 import Products from "@/components/Products";
 
-// Force this page to be dynamically rendered (avoids prerendering errors)
+// Force dynamic rendering to avoid Next.js prerendering errors
 export const dynamic = 'force-dynamic';
 
-// Fetch products directly from Stripe
+/**
+ * Fetch products from Stripe.
+ * Returns an array of product objects or an empty array if fetch fails.
+ */
 async function fetchProductsFromStripe() {
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+
   if (!stripeSecretKey) {
-    console.error("Stripe secret key not set");
+    console.error("Stripe secret key is not set in environment variables.");
     return [];
   }
 
@@ -20,14 +24,14 @@ async function fetchProductsFromStripe() {
     });
 
     if (!res.ok) {
-      console.error("Failed to fetch products:", res.statusText);
+      console.error("Failed to fetch products from Stripe:", res.statusText);
       return [];
     }
 
     const data = await res.json();
     return data?.data ?? [];
-  } catch (err) {
-    console.error("Error fetching products:", err);
+  } catch (error) {
+    console.error("Error fetching products from Stripe:", error);
     return [];
   }
 }
@@ -38,20 +42,20 @@ export default async function Home() {
   let planner = null;
   const stickers = [];
 
-  for (const product of products) {
-    if (product?.name === "Medieval Dragon Month Planner.jpeg") {
+  // Separate planner from other products
+  products.forEach(product => {
+    if (product?.name?.includes("Medieval Dragon Month Planner")) {
       planner = product;
-    } else {
+    } else if (product) {
       stickers.push(product);
     }
-  }
+  });
 
   return (
     <>
       <ImageBanner />
-
       <section>
-        {/* Pass safe defaults in case planner or stickers are undefined */}
+        {/* Provide safe defaults if planner or stickers are missing */}
         <Products planner={planner ?? null} stickers={stickers ?? []} />
       </section>
     </>
