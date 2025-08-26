@@ -29,14 +29,10 @@ async function fetchProductsFromStripe() {
   }
 }
 
-// Use Next.js server-side rendering
-export async function getServerSideProps() {
+// This is a server component by default
+export default async function Home() {
   const products = await fetchProductsFromStripe();
 
-  return { props: { products } };
-}
-
-export default function Home({ products }) {
   let planner = null;
   let stickers = [];
 
