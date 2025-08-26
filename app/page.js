@@ -22,21 +22,25 @@ async function fetchProductsFromStripe() {
     }
 
     const data = await res.json();
-    return data.data || [];
+    return data?.data || [];
   } catch (err) {
     console.error("Error fetching products:", err);
     return [];
   }
 }
 
-// This is a server component by default
+// Server component
 export default async function Home() {
   const products = await fetchProductsFromStripe();
+
+  // Ensure products is always an array
+  const safeProducts = Array.isArray(products) ? products : [];
 
   let planner = null;
   let stickers = [];
 
-  for (let product of products) {
+  for (let product of safeProducts) {
+    if (!product) continue; // skip any undefined items
     if (product.name === "Medieval Dragon Month Planner.jpeg") {
       planner = product;
       continue;
@@ -48,7 +52,7 @@ export default async function Home() {
     <>
       <ImageBanner />
       <section>
-        <Products planner={planner} stickers={stickers} />
+        <Products planner={planner ?? null} stickers={stickers ?? []} />
       </section>
     </>
   );
